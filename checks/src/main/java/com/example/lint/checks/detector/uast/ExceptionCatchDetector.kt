@@ -1,4 +1,4 @@
-package com.example.lint.checks.detector
+package com.example.lint.checks.detector.uast
 
 import com.android.tools.lint.client.api.UElementHandler
 import com.android.tools.lint.detector.api.*
@@ -58,8 +58,8 @@ class ExceptionCatchDetector : Detector(), Detector.UastScanner {
                 }
                 val parameters = node.parameters
                 parameters.forEach {
-                    if(it.type.canonicalText == "java.lang.Exception") {
-                        if(!string.contains("throw")) {
+                    if (it.type.canonicalText == "java.lang.Exception") {
+                        if (!string.contains("throw")) {
                             context.report(
                                 ISSUE,
                                 body,

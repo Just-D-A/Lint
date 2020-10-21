@@ -1,4 +1,4 @@
-package com.example.lint.checks.detector
+package com.example.lint.checks.detector.uast
 
 import com.android.tools.lint.client.api.UElementHandler
 import com.android.tools.lint.detector.api.*

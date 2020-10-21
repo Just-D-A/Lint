@@ -1,21 +1,20 @@
-package com.example.lint.checks.detector
+package com.example.lint.checks.detector.uast
 
 import com.android.tools.lint.client.api.UElementHandler
 import com.android.tools.lint.detector.api.*
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UMethod
 
-@Suppress("UnstableApiUsage")
-class AbbreviationDetector : Detector(), Detector.UastScanner {
+class MaxArgumentsCountDetector : Detector(), Detector.UastScanner {
     companion object {
         /** Issue describing the problem and pointing to the detector implementation */
         @JvmField
         val ISSUE: Issue = Issue.create(
             // ID: used in @SuppressLint warnings etc
-            id = "AbbreviationFound",
+            id = "MaxArgumentsCount",
             // Title -- shown in the IDE's preference dialog, as category headers in the
             // Analysis results window, etc
-            briefDescription = "Use this abbreviation does not match the coding convention",
+            briefDescription = "Arguments count does not match the coding convention",
             // Full explanation of the issue; you can use some markdown markup such as
             // `monospace`, *italic*, and **bold**.
             explanation = """
@@ -25,14 +24,14 @@ class AbbreviationDetector : Detector(), Detector.UastScanner {
             priority = 7,
             severity = Severity.WARNING,
             implementation = Implementation(
-                AbbreviationDetector::class.java,
+                MaxArgumentsCountDetector::class.java,
                 Scope.JAVA_FILE_SCOPE
             )
         )
     }
 
     override fun getApplicableUastTypes(): List<Class<out UElement?>>? {
-        return listOf(UElement::class.java)
+        return listOf(UMethod::class.java)
     }
 
     override fun createUastHandler(context: JavaContext): UElementHandler? {
@@ -45,22 +44,13 @@ class AbbreviationDetector : Detector(), Detector.UastScanner {
         // Also be aware of context.getJavaEvaluator() which provides a lot of
         // utility functionality.
         return object : UElementHandler() {
-            override fun visitElement(node: UElement) {
-                val name = node.asLogString()
-
-                if (name.contains("ctx")) {
+            override fun visitMethod(node: UMethod) {
+                val params = node.uastParameters
+                if (params.size > 5) {
                     context.report(
-                        ISSUE,
-                        node,
-                        context.getNameLocation(node),
-                        "Don't use abbreviations. Rename this argument to 'context'.",
-                        createFix()
+                        ISSUE, node, context.getNameLocation(node), "Method has too much arguments."
                     )
                 }
-            }
-
-            private fun createFix(): LintFix? {
-                return fix().replace().text("ctx").with("context").build()
             }
         }
     }

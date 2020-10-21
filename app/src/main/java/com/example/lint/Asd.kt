@@ -2,7 +2,7 @@ package com.example.lint
 
 import android.content.Context
 
-class Asd(context: Context, a: Int) {
+class Asd(context: Context, a: Int): InteBAS  {
     val ass = "as"
     fun some(a: Int) {}
     fun doSome(a: Int, context: Context) {}

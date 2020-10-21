@@ -1,0 +1,4 @@
+package com.example.lint.very_big_very_very_very_very_very_very_very_very_very_very_very_very_veryvery_very_very_very_very_very_very_very_very_very_very_very_veryvery_very_very_very_very_very_very_very_very_very_very_very_very;
+
+public class BAdclass {
+}

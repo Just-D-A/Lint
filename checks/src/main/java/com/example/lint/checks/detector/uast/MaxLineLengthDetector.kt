@@ -1,4 +1,4 @@
-package com.example.lint.checks.detector
+package com.example.lint.checks.detector.uast
 
 import com.android.tools.lint.client.api.UElementHandler
 import com.android.tools.lint.detector.api.*
@@ -46,10 +46,12 @@ class MaxLineLengthDetector : Detector(), Detector.UastScanner {
             override fun visitFile(node: UFile) {
                 //node.expressions.forEach {
                 val file = context.file
+
                 var beginPosition = 0
-                file.forEachLine {
-                    val length = it.length
-                    if (length > 130) {
+                file.forEachLine {line ->
+                    val length = line.length
+
+                    if ((length > 130) && !(line.contains("import")) && !(line.contains("package"))) {
                         context.report(
                             ISSUE, node, context.getRangeLocation(node, beginPosition, length),
                             "The line contains more than 130 characters. Divide this line."
