@@ -1,38 +1,37 @@
-package com.example.lint.checks.name_file
+package com.example.lint.checks.detector
 
 import com.android.tools.lint.client.api.UElementHandler
 import com.android.tools.lint.detector.api.*
-import org.jetbrains.uast.UClass
 import org.jetbrains.uast.UElement
+import org.jetbrains.uast.UMethod
 
-@Suppress("UnstableApiUsage")
-class NameFileDetector : Detector(), Detector.UastScanner {
+class MaxArgumentsCountDetector : Detector(), Detector.UastScanner {
     companion object {
         /** Issue describing the problem and pointing to the detector implementation */
         @JvmField
         val ISSUE: Issue = Issue.create(
             // ID: used in @SuppressLint warnings etc
-            id = "FileName",
+            id = "MaxArgumentsCount",
             // Title -- shown in the IDE's preference dialog, as category headers in the
             // Analysis results window, etc
-            briefDescription = "The file name does not match the coding convention",
+            briefDescription = "Arguments count does not match the coding convention",
             // Full explanation of the issue; you can use some markdown markup such as
             // `monospace`, *italic*, and **bold**.
             explanation = """
-                  Class names are recorded in UpperCamelCase.
+                  Don't use abbreviations.
                     """,
             category = Category.CORRECTNESS,
-            priority = 6,
+            priority = 7,
             severity = Severity.WARNING,
             implementation = Implementation(
-                NameFileDetector::class.java,
+                MaxArgumentsCountDetector::class.java,
                 Scope.JAVA_FILE_SCOPE
             )
         )
     }
 
     override fun getApplicableUastTypes(): List<Class<out UElement?>>? {
-        return listOf(UClass::class.java)
+        return listOf(UMethod::class.java)
     }
 
     override fun createUastHandler(context: JavaContext): UElementHandler? {
@@ -45,14 +44,12 @@ class NameFileDetector : Detector(), Detector.UastScanner {
         // Also be aware of context.getJavaEvaluator() which provides a lot of
         // utility functionality.
         return object : UElementHandler() {
-            override fun visitClass(node: UClass) {
-                val string = node.name ?: return
-                if(string.contains(Regex("[A-Z][A-Z]")))
+            override fun visitMethod(node: UMethod) {
+                val params = node.uastParameters
+                if (params.size > 5) {
                     context.report(
-                        ISSUE, node, context.getNameLocation(node),
-                        "Rename this file"
-                    )
-
+                        ISSUE, node, context.getNameLocation(node), "Method has too much arguments.")
+                }
             }
         }
     }

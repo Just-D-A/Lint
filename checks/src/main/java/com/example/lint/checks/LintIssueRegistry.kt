@@ -3,20 +3,20 @@ package com.example.lint.checks
 import com.android.tools.lint.client.api.IssueRegistry
 import com.android.tools.lint.detector.api.CURRENT_API
 import com.android.tools.lint.detector.api.Issue
-import com.example.lint.checks.abbreviation.AbbreviationDetector
-import com.example.lint.checks.context_argument.PossitionArgumentDetector
-import com.example.lint.checks.name_file.NameFileDetector
-import com.example.lint.checks.sample.SampleCodeDetector
+import com.example.lint.checks.detector.*
 
 class LintIssueRegistry : IssueRegistry() {
 
     var listOfIssues = mutableListOf<Issue>()
 
     init {
-        listOfIssues.add(SampleCodeDetector.ISSUE)
+ //       listOfIssues.add(SampleCodeDetector.ISSUE)
         listOfIssues.add(NameFileDetector.ISSUE)
         listOfIssues.add(AbbreviationDetector.ISSUE)
-        listOfIssues.add(PossitionArgumentDetector.ISSUE)
+        listOfIssues.add(PositionArgumentDetector.ISSUE)
+        listOfIssues.add(MaxLineLengthDetector.ISSUE)
+        listOfIssues.add(MaxArgumentsCountDetector.ISSUE)
+        listOfIssues.add(ExceptionCatchDetector.ISSUE)
     }
 
     override val issues = listOfIssues

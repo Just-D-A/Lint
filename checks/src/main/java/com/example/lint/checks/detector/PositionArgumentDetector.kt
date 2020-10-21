@@ -1,35 +1,34 @@
-package com.example.lint.checks.context_argument
+package com.example.lint.checks.detector
 
 import com.android.tools.lint.client.api.UElementHandler
 import com.android.tools.lint.detector.api.*
-import com.example.lint.checks.name_file.NameFileDetector
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UMethod
 import org.jetbrains.uast.UParameter
 
 @Suppress("UnstableApiUsage")
-class PossitionArgumentDetector : Detector(), Detector.UastScanner {
+class PositionArgumentDetector : Detector(), Detector.UastScanner {
     companion object {
         /** Issue describing the problem and pointing to the detector implementation */
         @JvmField
         val ISSUE: Issue = Issue.create(
-                // ID: used in @SuppressLint warnings etc
-                id = "ContextArgumentPosition",
-                // Title -- shown in the IDE's preference dialog, as category headers in the
-                // Analysis results window, etc
-                briefDescription = "The file name does not match the coding convention",
-                // Full explanation of the issue; you can use some markdown markup such as
-                // `monospace`, *italic*, and **bold**.
-                explanation = """
+            // ID: used in @SuppressLint warnings etc
+            id = "ContextArgumentPosition",
+            // Title -- shown in the IDE's preference dialog, as category headers in the
+            // Analysis results window, etc
+            briefDescription = "The file name does not match the coding convention",
+            // Full explanation of the issue; you can use some markdown markup such as
+            // `monospace`, *italic*, and **bold**.
+            explanation = """
                   Class names are recorded in UpperCamelCase.
                     """,
-                category = Category.CORRECTNESS,
-                priority = 6,
-                severity = Severity.WARNING,
-                implementation = Implementation(
-                        PossitionArgumentDetector::class.java,
-                        Scope.JAVA_FILE_SCOPE
-                )
+            category = Category.CORRECTNESS,
+            priority = 6,
+            severity = Severity.WARNING,
+            implementation = Implementation(
+                PositionArgumentDetector::class.java,
+                Scope.JAVA_FILE_SCOPE
+            )
         )
     }
 
@@ -53,15 +52,17 @@ class PossitionArgumentDetector : Detector(), Detector.UastScanner {
 
                 if ((params[0] != node) && ((node.name == "context") || (node.name == "ctx"))) {
                     context.report(
-                            NameFileDetector.ISSUE, node as UElement, context.getNameLocation(node),
-                            "Context argument should be the first"
+                        ISSUE, node as UElement, context.getNameLocation(node),
+                        "Context argument should be the first"
                     )
                 }
 
                 if ((params[params.size - 1] != node) && (node.name == "callback")) {
                     context.report(
-                            NameFileDetector.ISSUE, node as UElement, context.getNameLocation(node),
-                            "Callback argument should be the last"
+                        ISSUE,
+                        node as UElement,
+                        context.getNameLocation(node),
+                        "Callback argument should be the last.",
                     )
                 }
             }
