@@ -23,12 +23,19 @@ class NameFileDetector : Detector(), Detector.UastScanner {
                     """,
             category = Category.CORRECTNESS,
             priority = 6,
-            severity = Severity.INFORMATIONAL,
+            severity = Severity.WARNING,
             implementation = Implementation(
                 NameFileDetector::class.java,
                 Scope.JAVA_FILE_SCOPE
             )
         )
+
+        const val ACTIVITY_VALUE = "Activity"
+        const val FRAGMENT_VALUE = "Fragment"
+        const val VIEW_VALUE = "View"
+        const val SERVICE_VALUE = "Service"
+        const val PRESENTER_VALUE = "Presenter"
+        const val PROVIDER_VALUE = "Provider"
     }
 
     override fun getApplicableUastTypes(): List<Class<out UElement?>>? {
@@ -46,26 +53,72 @@ class NameFileDetector : Detector(), Detector.UastScanner {
         // utility functionality.
         return object : UElementHandler() {
             override fun visitClass(node: UClass) {
-                val string = node.name ?: return
-                val l = node.parent
-                if (string.contains(Regex("[A-Z][A-Z]")))
+                /**
+                 * UpperCamelCase check
+                 */
+                val name = node.name ?: return
+
+                if (name.contains(Regex("[A-Z][A-Z]")))
                     context.report(
                         ISSUE, node, context.getNameLocation(node),
                         "Rename this file. File name should match UpperCamelCase.",
-                        createFix(string)
+                        createFix(name)
                     )
 
-               /* val some = node.uastSuperTypes ?: return
 
-                val part = some[0].type.presentableText
-                if (string.matches(Regex(".*${part}"))) { // this if doesn't work
-                    context.report(
-                        ISSUE, node, context.getNameLocation(node),
-                        some[0].type.presentableText,
-                        createFix(string)
-                    )
-                }*/
+                /**
+                 * Parent suffix check
+                 */
+                val superClass = node.javaPsi.superClass ?: return
 
+                if (!superClass.isInterface && (superClass.name != "Object")) {
+                    val part = superClass.name ?: return
+
+                    when {
+                        part.matches(Regex(".*${ACTIVITY_VALUE}$")) ->
+                            if (!name.matches(Regex(".*${ACTIVITY_VALUE}$"))) {
+                                makeContextReport(value = ACTIVITY_VALUE, node)
+                            }
+
+                        part.matches(Regex(".*${FRAGMENT_VALUE}$")) ->
+                            if (!name.matches(Regex(".*${FRAGMENT_VALUE}$"))) {
+                                makeContextReport(value = FRAGMENT_VALUE, node)
+                            }
+
+                        part.matches(Regex(".*${VIEW_VALUE}$")) ->
+                            if (!name.matches(Regex(".*${VIEW_VALUE}$"))) {
+                                makeContextReport(value = VIEW_VALUE, node)
+                            }
+
+                        part.matches(Regex(".*${SERVICE_VALUE}$")) ->
+                            if (!name.matches(Regex(".*${SERVICE_VALUE}$"))) {
+                                makeContextReport(value = SERVICE_VALUE, node)
+                            }
+
+                        part.matches(Regex(".*${PRESENTER_VALUE}$")) ->
+                            if (!name.matches(Regex(".*${PRESENTER_VALUE}$"))) {
+                                makeContextReport(value = PRESENTER_VALUE, node)
+                            }
+
+                        part.matches(Regex(".*${PROVIDER_VALUE}$")) ->
+                            if (!name.matches(Regex(".*${PROVIDER_VALUE}$"))) {
+                                makeContextReport(value = PROVIDER_VALUE, node)
+                            }
+
+                        else -> if (!name.contains(part)) { // this if doesn't work
+                            makeContextReport(part, node)
+                        }
+
+                    }
+                }
+
+            }
+
+            private fun makeContextReport(value: String, node: UClass) {
+                return context.report(
+                    ISSUE, node, context.getNameLocation(node),
+                    "Class name should end with $value"
+                )
             }
 
             private fun createFix(string: String): LintFix? {
@@ -74,14 +127,3 @@ class NameFileDetector : Detector(), Detector.UastScanner {
         }
     }
 }
-
-
-/*
-for interfaces
-context.report(
-ISSUE, node, context.getNameLocation(node),
-some[0].type.presentableText,
-createFix(string)
-)
-*/
-

@@ -47,7 +47,7 @@ class AbbreviationDetector : Detector(), Detector.UastScanner {
             override fun visitElement(node: UElement) {
                 val name = node.asLogString()
 
-                if (name.contains("ctx", false)) {
+                if (name.contains("ctx")) {
                     context.report(
                         ISSUE,
                         node,
@@ -56,6 +56,16 @@ class AbbreviationDetector : Detector(), Detector.UastScanner {
                         createContextFix()
                     )
                 }
+
+                //if (name.contains("final")) {
+                    context.report(
+                        ISSUE,
+                        node,
+                        context.getNameLocation(node),
+                         name/*"Don't use finalizer."*/,
+                        createContextFix()
+                    )
+             //   }
             }
 
             private fun createContextFix(): LintFix? {

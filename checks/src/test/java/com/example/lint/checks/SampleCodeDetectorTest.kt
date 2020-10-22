@@ -15,10 +15,6 @@
  */
 package com.example.lint.checks
 
-import com.android.tools.lint.checks.infrastructure.LintDetectorTest
-import com.android.tools.lint.detector.api.Detector
-import com.android.tools.lint.detector.api.Issue
-
 @Suppress("UnstableApiUsage")
 class SampleCodeDetectorTest {
     fun testBasic() {

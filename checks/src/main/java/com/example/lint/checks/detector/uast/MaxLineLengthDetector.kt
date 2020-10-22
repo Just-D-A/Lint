@@ -2,7 +2,9 @@ package com.example.lint.checks.detector.uast
 
 import com.android.tools.lint.client.api.UElementHandler
 import com.android.tools.lint.detector.api.*
-import org.jetbrains.uast.*
+
+import org.jetbrains.uast.UClass
+import org.jetbrains.uast.UElement
 
 class MaxLineLengthDetector : Detector(), Detector.UastScanner {
     companion object {
@@ -30,7 +32,7 @@ class MaxLineLengthDetector : Detector(), Detector.UastScanner {
     }
 
     override fun getApplicableUastTypes(): List<Class<out UElement?>>? {
-        return listOf(UFile::class.java)
+        return listOf(UClass::class.java)
     }
 
     override fun createUastHandler(context: JavaContext): UElementHandler? {
@@ -43,24 +45,26 @@ class MaxLineLengthDetector : Detector(), Detector.UastScanner {
         // Also be aware of context.getJavaEvaluator() which provides a lot of
         // utility functionality.
         return object : UElementHandler() {
-            override fun visitFile(node: UFile) {
-                //node.expressions.forEach {
-                val file = context.file
+            override fun visitClass(node: UClass) {
+//                UFile
+                val text = node.parent.text
+
+                val lines = text.lines()
 
                 var beginPosition = 0
-                file.forEachLine {line ->
+                lines.forEach { line ->
                     val length = line.length
 
                     if ((length > 130) && !(line.contains("import")) && !(line.contains("package"))) {
                         context.report(
-                            ISSUE, node, context.getRangeLocation(node, beginPosition, length),
-                            "The line contains more than 130 characters. Divide this line."
+                            ISSUE, node, context.getRangeLocation(node.parent, beginPosition, length),
+                            "The line contains more than 130 symbols. Divide this line."
                         )
                     }
+
                     beginPosition += length
                     beginPosition++ // add new string sym
                 }
-                //}
             }
         }
     }
