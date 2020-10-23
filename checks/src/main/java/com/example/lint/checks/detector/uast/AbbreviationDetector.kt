@@ -57,15 +57,6 @@ class AbbreviationDetector : Detector(), Detector.UastScanner {
                     )
                 }
 
-                //if (name.contains("final")) {
-                    context.report(
-                        ISSUE,
-                        node,
-                        context.getNameLocation(node),
-                         name/*"Don't use finalizer."*/,
-                        createContextFix()
-                    )
-             //   }
             }
 
             private fun createContextFix(): LintFix? {

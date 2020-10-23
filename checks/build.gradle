@@ -11,9 +11,6 @@ lintOptions {
 }
 
 dependencies {
-    // lintPublish project(path: ':lint')
-    //    lintChecks project(path: ':lint')
-    // For a description of the below dependencies, see the main project README
     compileOnly "com.android.tools.lint:lint-api:27.1.0"
     compileOnly "com.android.tools.lint:lint-checks:27.1.0"
     //noinspection DifferentStdlibGradleVersion

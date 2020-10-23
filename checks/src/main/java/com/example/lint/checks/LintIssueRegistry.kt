@@ -15,7 +15,6 @@ class LintIssueRegistry : IssueRegistry() {
     var listOfIssues = mutableListOf<Issue>()
 
     init {
-        //       listOfIssues.add(SampleCodeDetector.ISSUE)
         listOfIssues.add(NameFileDetector.ISSUE)
         listOfIssues.add(AbbreviationDetector.ISSUE)
         listOfIssues.add(PositionArgumentDetector.ISSUE)
